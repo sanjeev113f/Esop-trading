@@ -1,0 +1,27 @@
+micronaut:
+  server:
+    cors:
+      enabled: true
+      configurations:
+        web:
+        all:
+          allowedMethods:
+            - OPTIONS
+            - POST
+            - GET
+  application:
+    name: esop
+netty:
+  default:
+    allocator:
+      max-order: 3
+
+app:
+  max-wallet-limit: 10000000
+  max-inventory-limit: 10000000
+  platform-fee-percentage: 2
+
+
+
+
+
