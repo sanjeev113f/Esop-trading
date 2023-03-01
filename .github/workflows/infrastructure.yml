@@ -46,7 +46,7 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "sanjeev-deployment" ]
+    branches: [ "sanjeev-infrastructure" ]
   pull_request:
 
 permissions:
