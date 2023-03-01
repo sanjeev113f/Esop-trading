@@ -7,48 +7,48 @@ on:
     branches: ["sanjeev-deployment"]
 
 jobs:
-  test:
-    runs-on: ubuntu-22.04
+  # test:
+  #   runs-on: ubuntu-22.04
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
 
-    - name: Setup JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'corretto'
+  #   - name: Setup JDK 17
+  #     uses: actions/setup-java@v3
+  #     with:
+  #       java-version: '17'
+  #       distribution: 'corretto'
     
-    - name: Run test using gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: test
+  #   - name: Run test using gradle
+  #     uses: gradle/gradle-build-action@v2
+  #     with:
+  #       arguments: test
 
-  build:
-    needs: test
-    runs-on: ubuntu-22.04
+  # build:
+  #   needs: test
+  #   runs-on: ubuntu-22.04
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
 
-    - name: Setup JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'corretto'
+  #   - name: Setup JDK 17
+  #     uses: actions/setup-java@v3
+  #     with:
+  #       java-version: '17'
+  #       distribution: 'corretto'
   
-    - name: build shadownJar using gradle
-      uses: gradle/gradle-build-action@v2
-      with:
-        arguments: shadowJar
+  #   - name: build shadownJar using gradle
+  #     uses: gradle/gradle-build-action@v2
+  #     with:
+  #       arguments: shadowJar
 
-    - name: Archive shadowJar
-      uses: actions/upload-artifact@v3
-      with:
-        name: esopApp 
-        path: build/libs
+  #   - name: Archive shadowJar
+  #     uses: actions/upload-artifact@v3
+  #     with:
+  #       name: esopApp 
+  #       path: build/libs
 
   deploy:
     needs: [test, build]
@@ -71,6 +71,7 @@ jobs:
           eval `ssh-agent`
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
           scp -o StrictHostKeyChecking=no "deploy.sh" ec2-user@$SSH_HOST:~
+          ls
           scp -o StrictHostKeyChecking=no "esop-trading-0.1-all.jar" ec2-user@$SSH_HOST:~
           ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST:~ -t "sudo yum install java-17-amazon-corretto-headless"
           ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST:~
