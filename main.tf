@@ -28,7 +28,7 @@ resource "aws_instance" "app_server" {
   instance_type               = "t2.micro"
   key_name                    = data.aws_key_pair.gurukul2023.key_name
   associate_public_ip_address = true
-  vpc_security_group_ids = [aws_security_group.gurukul_2023_security_group.id]
+  vpc_security_group_ids      = [aws_security_group.gurukul_2023_security_group.id]
 
   tags = {
     Name = "gurukul-Esop"
