@@ -31,7 +31,8 @@ resource "aws_instance" "app_server" {
   vpc_security_group_ids      = [aws_security_group.gurukul_2023_security_group.id]
 
   tags = {
-    Name = "gurukul-Esop"
+    Name = "rrr-gurukul-Esop"
+    createdBy = "sanjeev"
   }
 }
 
