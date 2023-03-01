@@ -27,6 +27,7 @@ jobs:
 
   build:
     needs: test
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Checkout code
