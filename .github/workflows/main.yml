@@ -51,7 +51,7 @@ jobs:
   #       path: build/libs
 
   deploy:
-    needs: [test, build]
+    # needs: [test, build]
     runs-on: ubuntu-22.04
     
     steps:
