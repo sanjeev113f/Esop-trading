@@ -55,6 +55,10 @@ permissions:
 jobs:
   terraform:
     name: 'Terraform'
+    env: 
+      AWS_ACCESS_KEY_ID: ${{secrets.ACCESS_KEY}}
+      AWS_SECRET_ACCESS_KEY: ${{secrets.SECRET_KEY}}
+
     runs-on: ubuntu-22.04
     environment: production
 
