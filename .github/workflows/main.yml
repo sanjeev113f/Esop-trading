@@ -45,7 +45,7 @@ jobs:
         arguments: shadowJar
 
     - name: Archive shadowJar
-      uses: action/upload-artifact@v3
+      uses: actions/upload-artifact@v3
       with:
         name: esopApp 
         path: build/libs/esop-trading-0.1-all.jar
