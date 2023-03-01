@@ -50,10 +50,27 @@ jobs:
         name: esopApp 
         path: build/libs
 
-      
-  
+  deploy:
+    needs: [test, build]
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-
-
-      
-        
+      - name: Download Artifact
+      - uses: actions/download-artifact@v3
+        with:
+          name: esopApp
+    
+      - name: Transfer artifact to EC2 instance
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run:
+          eval `ssh-agent`
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+          scp -o StrictHostKeyChecking=no "deploy.sh" ec2-user@$SSH_HOST:~
+          scp -o StrictHostKeyChecking=no "esop-trading-0.1-all.jar" ec2-user@$SSH_HOST:~
+          ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST:~ -t "sudo yum install java-17-amazon-corretto-headless"
+          ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST:~
