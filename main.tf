@@ -15,18 +15,18 @@ terraform {
 }
 
 provider "aws" {
-  region = "ap-south-1"
+  region = "us-west-2"
 }
 
-data "aws_key_pair" "gurukul2023" {
-  key_name           = "gurukul-2023"
+data "aws_key_pair" "gurukul-2023" {
+  key_name           = "gurukul-amit"
   include_public_key = true
 }
 
 resource "aws_instance" "app_server" {
-  ami                         = "ami-09ba48996007c8b50"
+  ami                         = "ami-830c94e3"
   instance_type               = "t2.micro"
-  key_name                    = data.aws_key_pair.gurukul2023.key_name
+  key_name                    = data.aws_key_pair.gurukul-2023.key_name
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.gurukul_2023_security_group.id]
 
@@ -48,13 +48,6 @@ resource "aws_security_group" "gurukul_2023_security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 22
-    protocol    = "tcp"
-    to_port     = 22
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port        = 0
     to_port          = 0
@@ -66,4 +59,9 @@ resource "aws_security_group" "gurukul_2023_security_group" {
 
 output "instance_ip_addr" {
   value = aws_instance.app_server.public_ip
+}
+
+output "instance_id" {
+  description = "ID of the EC2 instance"
+  value       = aws_instance.app_server.id
 }
