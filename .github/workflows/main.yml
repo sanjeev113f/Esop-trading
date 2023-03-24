@@ -2,12 +2,11 @@ name: CI/CD PIPELINE
 
 on:
   push:
-    branches: ["sanjeev-deployment"]
+    branches: ["terraform_practice"]
   pull_request:
-    branches: ["sanjeev-deployment"]
+    branches: ["terraform_practice"]
 
 jobs:
-
 
   terraform:
     name: 'Terraform'
@@ -43,8 +42,16 @@ jobs:
         # On push to "main", build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/"sanjeev-deployment"' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
+
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
+
+      - outputs:
+        output1: ${{ steps.step1.outputs.instance_ip_addr}}
+
+
 
   # test:
   #   runs-on: ubuntu-22.04
@@ -58,7 +65,7 @@ jobs:
   #     with:
   #       java-version: '17'
   #       distribution: 'corretto'
-    
+
   #   - name: Run test using gradle
   #     uses: gradle/gradle-build-action@v2
   #     with:
@@ -106,8 +113,12 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
+          OUTPUT1: ${{needs.job1.outputs.output1}}
+
         run: |
           eval `ssh-agent`
+          echo "sanjeev"
+          echo "$OUTPUT1"
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
           scp -o StrictHostKeyChecking=no "deploy.sh" ec2-user@$SSH_HOST:~
           scp -o StrictHostKeyChecking=no "esop-0.1-all.jar" ec2-user@$SSH_HOST:~
