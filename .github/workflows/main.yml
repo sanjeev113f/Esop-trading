@@ -2,9 +2,9 @@ name: CI/CD PIPELINE
 
 on:
   push:
-    branches: ["sanjeev-deployment"]
+    branches: ["terraform_practice"]
   pull_request:
-    branches: ["sanjeev-deployment"]
+    branches: ["terraform_practice"]
 
 jobs:
   # test:
