@@ -15,30 +15,32 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-2"
+  region = "us-east-1"
+
 }
 
 data "aws_key_pair" "gurukul-2023" {
-  key_name           = "gurukul-amit"
+  key_name           = "Gurukul-Sanjeev"
   include_public_key = true
 }
 
 resource "aws_instance" "app_server" {
-  ami                         = "ami-07f3ef11ec14a1ea3"
+  ami                         = "ami-03c1fac8dd915ff60"
   instance_type               = "t2.micro"
   key_name                    = data.aws_key_pair.gurukul-2023.key_name
   associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.gurukul_2023_security_group.id]
+  subnet_id = aws_subnet.main.id
+  vpc_security_group_ids = [aws_security_group.gurukul_2023_security_group.id]
 
   tags = {
-    Name      = "rrr-gurukul-Esop"
+    Name      = "gurukul-sanjeev"
     createdBy = "sanjeev"
   }
 }
 
 resource "aws_security_group" "gurukul_2023_security_group" {
-
-  name        = "gurukul_2023_security_group"
+  name        = "allow_ssh"
+  vpc_id        = "vpc-019c09a1a0c5b4f6b"
   description = "Allow SSH and HTTP traffic from all sources"
 
   ingress {
@@ -63,6 +65,13 @@ resource "aws_security_group" "gurukul_2023_security_group" {
   }
 }
 
+resource "aws_subnet" "main" {
+  vpc_id     = "vpc-019c09a1a0c5b4f6b"
+  cidr_block = "10.0.0.96/28"
+  tags = {
+    Name = "Main"
+  }
+}
 output "instance_ip_addr" {
   value = aws_instance.app_server.public_ip
 }
