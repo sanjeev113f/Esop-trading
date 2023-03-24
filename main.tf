@@ -24,7 +24,7 @@ data "aws_key_pair" "gurukul-2023" {
 }
 
 resource "aws_instance" "app_server" {
-  ami                         = "ami-830c94e3"
+  ami                         = "ami-07f3ef11ec14a1ea3"
   instance_type               = "t2.micro"
   key_name                    = data.aws_key_pair.gurukul-2023.key_name
   associate_public_ip_address = true
