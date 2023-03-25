@@ -91,5 +91,3 @@ jobs:
       - name: step1
         run: echo "test=hello" >> "$GITHUB_OUTPUT"
 
-      - outputs:
-        output1: ${{ steps.step1.outputs.instance_ip_addr}}
