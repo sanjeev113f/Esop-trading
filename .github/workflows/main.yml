@@ -1,4 +1,4 @@
-name: CI/CD PIPELINE
+name: PIPELINE
 
 on:
   push:
@@ -7,70 +7,42 @@ on:
     branches: ["terraform_practice"]
 
 jobs:
-  # test:
-  #   runs-on: ubuntu-22.04
-
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v3
-
-  #   - name: Setup JDK 17
-  #     uses: actions/setup-java@v3
-  #     with:
-  #       java-version: '17'
-  #       distribution: 'corretto'
-
-  #   - name: Run test using gradle
-  #     uses: gradle/gradle-build-action@v2
-  #     with:
-  #       arguments: test
-
-  build:
-    # needs: test
-    runs-on: ubuntu-22.04
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
 
     steps:
-      - name: Checkout code
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'corretto'
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        run: terraform fmt -check
 
-      - name: build shadownJar using gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: shadowJar
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform init
 
-      - name: Archive shadowJar
-        uses: actions/upload-artifact@v3
-        with:
-          name: esopApp
-          path: build/libs
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
 
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-22.04
+        # On push to "", build or change infrastructure according to Terraform configuration files
+        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
 
-      - name: Download Artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: esopApp
-
-      - name: Transfer artifact to EC2 instance
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-        run: |
-          eval `ssh-agent`
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-          scp -o StrictHostKeyChecking=no "deploy.sh" ec2-user@$SSH_HOST:~
-          scp -o StrictHostKeyChecking=no "esop-0.1-all.jar" ec2-user@$SSH_HOST:~
-          ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST -t "sudo yum install java-17-amazon-corretto-headless -y"
-          ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST -t "sudo ./deploy.sh"
+      - outputs:
+        output1: ${{ steps.step1.outputs.instance_ip_addr}}
