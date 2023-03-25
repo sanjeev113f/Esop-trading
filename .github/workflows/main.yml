@@ -90,6 +90,6 @@ jobs:
 
       - name: Setting IP to a variable
         run: |
-          echo "instance_ip_add=${{steps.Apply.outputs.instance_ip_addr}}" >> "$GITHUB_ENV"
+          echo instance_ip_add=${{steps.Apply.outputs.instance_ip_addr}} >> $GITHUB_ENV
           echo instance_ip_add ${{instance_ip_add}}
         id: step1
