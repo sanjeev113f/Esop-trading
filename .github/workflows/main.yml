@@ -88,5 +88,3 @@ jobs:
         if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
-
-
