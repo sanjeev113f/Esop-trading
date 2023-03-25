@@ -47,7 +47,7 @@ jobs:
       - name: Transfer artifact to EC2 instance
         env:
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_HOST: ${{ secrets.GITHUB_ENV}}
         run: |
           eval `ssh-agent`
           echo "sanjeev kumar"
@@ -93,4 +93,3 @@ jobs:
         run: |
           echo "instance_ip_addr=${{steps.Apply.outputs.instance_ip_addr}}" >> "$GITHUB_ENV"
         id: step1
-
