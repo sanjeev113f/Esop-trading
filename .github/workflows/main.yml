@@ -51,7 +51,7 @@ jobs:
           eval `ssh-agent`
           echo "sanjeev kumar"
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-          scp -o StrictHostKeyChecking=no "deploy.sh" ec2-user@$GITHUB_ENV:~
+          scp -o StrictHostKeyChecking=no "deploy.sh" ec2-user@GITHUB_ENV:~
           scp -o StrictHostKeyChecking=no "esop-0.1-all.jar" ec2-user@$GITHUB_ENV:~
           ssh -o StrictHostKeyChecking=no ec2-user@$GITHUB_ENV -t "sudo yum install java-17-amazon-corretto-headless -y"
           ssh -o StrictHostKeyChecking=no ec2-user@$GITHUB_ENV -t "sudo chmod 755 deploy.sh && sudo ./deploy.sh"
@@ -88,7 +88,8 @@ jobs:
         run: terraform apply -auto-approve -input=false
 
 
-      - name: step1
+      - name: Setting IP to a variable
         run: |
-          echo "instance_ip_addr=${{steps.Apply.outputs.instance_ip_addr}}" >> "$GITHUB_ENV"
+          echo "instance_ip_add=${{steps.Apply.outputs.instance_ip_addr}}" >> "$GITHUB_ENV"
+          echo instance_ip_add ${{instance_ip_add}}
         id: step1
