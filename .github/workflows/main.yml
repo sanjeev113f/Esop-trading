@@ -7,48 +7,6 @@ on:
     branches: ["terraform_practice"]
 
 jobs:
-  terraform:
-    name: 'Terraform'
-    env:
-      AWS_ACCESS_KEY_ID: ${{secrets.ACCESS_KEY}}
-      AWS_SECRET_ACCESS_KEY: ${{secrets.SECRET_KEY}}
-
-    runs-on: ubuntu-22.04
-    environment: production
-
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
-
-    steps:
-      # Checkout the repository to the GitHub Actions runner
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-      - name: Terraform Init
-        run: terraform init
-
-      # Checks that all Terraform configuration files adhere to a canonical format
-      - name: Terraform Format
-        run: terraform fmt -check
-
-      # Generates an execution plan for Terraform
-      - name: Terraform Plan
-        run: terraform plan -input=false
-
-        # On push to "main", build or change infrastructure according to Terraform configuration files
-        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
-
-      - id: step1
-        run: echo "test=hello" >> "$GITHUB_OUTPUT"
-
-      - outputs:
-        output1: ${{ steps.step1.outputs.instance_ip_addr}}
   # test:
   #   runs-on: ubuntu-22.04
 
@@ -91,6 +49,48 @@ jobs:
         with:
           name: esopApp
           path: build/libs
+
+
+
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Checks that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        run: terraform fmt -check
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform init
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+
+        # On push to "", build or change infrastructure according to Terraform configuration files
+        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false
+
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
+
+      - outputs:
+        output1: ${{ steps.step1.outputs.instance_ip_addr}}
 
   deploy:
     needs: [build]
