@@ -84,7 +84,7 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -input=false
 
-      - name: Terraform Apply
+      - name: Apply
         if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
@@ -95,7 +95,8 @@ jobs:
         id: step1
 
       - name: step2
-        needs: step1
         run: |
-          echo "The IP address is ${{ steps.step1.outputs.instance_ip_addr }}"
+           echo "sanjeev"
+           echo ${{steps.Apply.outputs.instance_ip_addr}]
+#          echo "The IP address is ${{ steps.step1.outputs.instance_ip_addr }}"
         
