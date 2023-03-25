@@ -44,6 +44,13 @@ jobs:
         with:
           name: esopApp
 
+      - name: Transfer artifact to EC2 instance
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          eval `ssh-agent`
+
   terraform:
     needs: build
     name: 'Terraform'
