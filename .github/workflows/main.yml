@@ -97,6 +97,6 @@ jobs:
       - name: step2
         run: |
            echo "sanjeev"
-           echo ${{steps.Apply.outputs.instance_ip_addr}]
+           echo ${{steps.Apply.outputs.instance_ip_addr}}
 #          echo "The IP address is ${{ steps.step1.outputs.instance_ip_addr }}"
         
