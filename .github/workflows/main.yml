@@ -88,8 +88,10 @@ jobs:
         run: terraform apply -auto-approve -input=false
 
 
-      - name: Setting IP to a variable
-        run:
-          echo "instance_ip_add"=${{steps.Apply.outputs.instance_ip_addr}} >> $GITHUB_OUTPUT
-          echo "instance_ip_add" ${{instance_ip_add}}
-        id: step1
+      - name: Export IP Address to environment variable
+        run: export IP=$(terraform output public_ip | xargs)
+
+      - name: Setting Public IP Address to output
+        id: ip_address
+        run: echo ip=$IP >> $GITHUB_OUTPUT
+
