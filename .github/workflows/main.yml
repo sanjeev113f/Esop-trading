@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   build:
+    needs: terraform
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
@@ -58,7 +59,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST -t "sudo chmod 755 deploy.sh && sudo ./deploy.sh"
 
   terraform:
-    needs: build
+#    needs: build
     name: 'Terraform'
     env:
       AWS_ACCESS_KEY_ID: ${{secrets.ACCESS_KEY}}
@@ -87,4 +88,10 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
+
+      - id: step1
+        run: echo "test=hello" >> "$GITHUB_OUTPUT"
+
+      - outputs:
+        output1: ${{ steps.step1.outputs.instance_ip_addr}}
 
