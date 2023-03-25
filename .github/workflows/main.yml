@@ -32,6 +32,7 @@ jobs:
           path: build/libs
 
   terraform:
+    needs: build
     name: 'Terraform'
     env:
       AWS_ACCESS_KEY_ID: ${{secrets.ACCESS_KEY}}
@@ -58,5 +59,5 @@ jobs:
         run: terraform plan -input=false
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/"sanjeev-deployment"' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
