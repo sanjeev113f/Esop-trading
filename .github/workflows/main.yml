@@ -50,6 +50,12 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
         run: |
           eval `ssh-agent`
+          echo "sanjeev kumar"
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+          scp -o StrictHostKeyChecking=no "deploy.sh" ec2-user@$SSH_HOST:~
+          scp -o StrictHostKeyChecking=no "esop-0.1-all.jar" ec2-user@$SSH_HOST:~
+          ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST -t "sudo yum install java-17-amazon-corretto-headless -y"
+          ssh -o StrictHostKeyChecking=no ec2-user@$SSH_HOST -t "sudo chmod 755 deploy.sh && sudo ./deploy.sh"
 
   terraform:
     needs: build
@@ -81,3 +87,4 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/terraform_practice' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
+
